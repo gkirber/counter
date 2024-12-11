@@ -1,11 +1,29 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import './Counter.css'
 
 
 const Counter = () => {
-    const [maxValue, setMaxValue] = useState<number>(5)
-    const [startValue, setStartValue] = useState<number>(0)
-    const [count, setCount] = useState<number>(0)
+    const [maxValue, setMaxValue] = useState<number>(
+        () => Number(localStorage.getItem('maxValue')) || 5
+    )
+    const [startValue, setStartValue] = useState<number>(
+        () => Number(localStorage.getItem('startValue')) || 0
+    )
+    const [count, setCount] = useState<number>(
+        () => Number(localStorage.getItem('count')) || 0
+    )
+
+    useEffect(() => {
+        localStorage.setItem('maxValue', String(maxValue))
+    }, [maxValue])
+
+    useEffect(() => {
+        localStorage.setItem('startValue', String(startValue))
+    }, [startValue])
+
+    useEffect(() => {
+        localStorage.setItem('count', String(count))
+    }, [count])
 
     const handleSetValues = () => {
         if (startValue < maxValue) {
@@ -25,6 +43,22 @@ const Counter = () => {
         setCount(startValue)
     }
 
+    const handleMaxValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = Number(e.target.value)
+        setMaxValue(newValue)
+        if (newValue < startValue) {
+            setStartValue(newValue)
+            setCount(newValue)
+        }
+    }
+
+    const handleStartValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = Number(e.target.value)
+        setStartValue(newValue)
+        setCount(newValue)
+    }
+
+
     return (
         <div className="container">
             <div className="box">
@@ -33,7 +67,7 @@ const Counter = () => {
                     <input
                         type="text"
                         value={maxValue || ''}
-                        onChange={(e) => setMaxValue(Number(e.target.value) || 0)}
+                        onChange={handleMaxValueChange}
                     />
                 </div>
                 <div>
@@ -41,7 +75,7 @@ const Counter = () => {
                     <input
                         type="text"
                         value={startValue || ''}
-                        onChange={(e) => setStartValue(Number(e.target.value) || 0)}
+                        onChange={handleStartValueChange}
                     />
                 </div>
                 <button className="button" onClick={handleSetValues}>Set</button>
