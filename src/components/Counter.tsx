@@ -1,29 +1,21 @@
-import React, {useEffect, useState} from 'react'
+import React, {useState} from 'react'
 import './Counter.css'
 
 
 const Counter = () => {
-    const [maxValue, setMaxValue] = useState<number>(
-        () => Number(localStorage.getItem('maxValue')) || 5
-    )
-    const [startValue, setStartValue] = useState<number>(
-        () => Number(localStorage.getItem('startValue')) || 0
-    )
-    const [count, setCount] = useState<number>(
-        () => Number(localStorage.getItem('count')) || 0
-    )
+    const [maxValue, setMaxValue] = useState<number>(5)
+    const [startValue, setStartValue] = useState<number>(0)
+    const [count, setCount] = useState<number>(0)
 
-    useEffect(() => {
-        localStorage.setItem('maxValue', String(maxValue))
-    }, [maxValue])
+    const handleMaxValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = Number(e.target.value)
+        if (value >= 0) setMaxValue(value)
+    }
 
-    useEffect(() => {
-        localStorage.setItem('startValue', String(startValue))
-    }, [startValue])
-
-    useEffect(() => {
-        localStorage.setItem('count', String(count))
-    }, [count])
+    const handleStartValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = Number(e.target.value)
+        if (value >= 0 && value < maxValue) setStartValue(value)
+    }
 
     const handleSetValues = () => {
         if (startValue < maxValue) {
@@ -41,21 +33,6 @@ const Counter = () => {
 
     const handleReset = () => {
         setCount(startValue)
-    }
-
-    const handleMaxValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = Number(e.target.value)
-        setMaxValue(newValue)
-        if (newValue < startValue) {
-            setStartValue(newValue)
-            setCount(newValue)
-        }
-    }
-
-    const handleStartValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = Number(e.target.value)
-        setStartValue(newValue)
-        setCount(newValue)
     }
 
 
