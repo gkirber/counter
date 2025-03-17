@@ -1,69 +1,43 @@
-import React, {useState} from 'react'
-import './Counter.css'
-
+import React from 'react'
+import {useDispatch, useSelector} from 'react-redux'
+import '../styles/Counter.css'
+import {AppDispatch, RootState} from '../app/store'
+import {increment, reset, setCount, setMaxValue, setStartValue} from '../features/counterSlice'
 
 const Counter = () => {
-    const [maxValue, setMaxValue] = useState<number>(5)
-    const [startValue, setStartValue] = useState<number>(0)
-    const [count, setCount] = useState<number>(0)
+    const dispatch = useDispatch<AppDispatch>()
+    const { maxValue, startValue, count } = useSelector((state: RootState) => state.counter)
 
     const handleMaxValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = Number(e.target.value)
-        if (value >= 0) setMaxValue(value)
+        dispatch(setMaxValue(Number(e.target.value)))
     }
 
     const handleStartValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = Number(e.target.value)
-        if (value >= 0 && value < maxValue) setStartValue(value)
+        dispatch(setStartValue(Number(e.target.value)))
     }
-
-    const handleSetValues = () => {
-        if (startValue < maxValue) {
-            setCount(startValue)
-        } else {
-            alert('Start value must be less than Max value!')
-        }
-    }
-
-    const handleIncrement = () => {
-        if (count < maxValue) {
-            setCount(count + 1)
-        }
-    }
-
-    const handleReset = () => {
-        setCount(startValue)
-    }
-
 
     return (
         <div className="container">
             <div className="box">
                 <div>
                     <label className="label">Max Value: </label>
-                    <input
-                        type="text"
-                        value={maxValue || ''}
-                        onChange={handleMaxValueChange}
-                    />
+                    <input type="text" value={maxValue || ''} onChange={handleMaxValueChange} />
                 </div>
                 <div>
                     <label className="label">Start Value: </label>
-                    <input
-                        type="text"
-                        value={startValue || ''}
-                        onChange={handleStartValueChange}
-                    />
+                    <input type="text" value={startValue || ''} onChange={handleStartValueChange} />
                 </div>
-                <button className="button" onClick={handleSetValues}>Set</button>
+                <button className="button" onClick={() => dispatch(setCount())}>Set</button>
             </div>
 
             <div className="box">
                 <div className="counter-display">{count}</div>
-                <button className="button" onClick={handleIncrement} disabled={count >= maxValue}>
+                <button className="button" onClick={() => dispatch(increment())} disabled={count >= maxValue}>
                     Increment
                 </button>
-                <button className="button" onClick={handleReset} disabled={count === startValue}>Reset</button>
+                <button className="button" onClick={() => dispatch(reset())} disabled={count === startValue}>
+                    Reset
+                </button>
             </div>
         </div>
     )
